@@ -1,12 +1,12 @@
 import './App.css'
 import React from 'react';
-import PlayerList from './PlayerList';
+import PlayerTable from './components/playerTable';
 
 const App = () => {
 
   return (
     <div className='App'>
-      <PlayerList />
+      <PlayerTable />
     </div>
   );
 };

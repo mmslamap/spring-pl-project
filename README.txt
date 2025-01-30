@@ -1,3 +1,3 @@
 Project name: Premier League 
 
-Description: This is a Spring Boot project that utilizes a PostgreSQL database, a React front end, and a Spring JPA for the backend.
+Description: This is a full-stack web application built with Spring Boot for the backend, React for the frontend, and PostgreSQL as the database. The backend uses Spring JPA for ORM-based database interaction. This project demonstrates how to integrate a modern tech stack to create a scalable, efficient, and user-friendly application.
