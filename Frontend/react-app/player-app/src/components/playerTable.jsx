@@ -8,6 +8,7 @@ const PlayerTable = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [playersPerPage, setPlayersPerPage] = useState(12);
+    const [sortConfig, setSortConfig] = useState({sortKey: null, direction: 'asc'});
     const [filters, setFilters] = useState({
         name: '',
         position: '',
@@ -17,7 +18,8 @@ const PlayerTable = () => {
     useEffect(() => {
         const fetchPlayers = async () => {
             const data = await getPlayers();
-            setPlayers(data || []);
+            const removedSquadTotal = data.filter(player => player.name !== 'Squad Total');
+            setPlayers(removedSquadTotal || []);
             setLoading(false);
         };
 
@@ -38,13 +40,41 @@ const PlayerTable = () => {
             (filters.teamName === "" || (player.team_name && player.team_name.toLowerCase().includes(filters.teamName.toLowerCase())))
         );
     });
+
+    const sortPlayers = (players, sortConfig) => {
+        if (!sortConfig.sortKey) return players;
+
+        return players.sort((a, b) => {
+            const valueA = a[sortConfig.sortKey];
+            const valueB = b[sortConfig.sortKey];
+
+            let comparison = 0;
+            if (typeof valueA === 'string' && typeof valueB === 'string') {
+                comparison = valueA.localeCompare(valueB);
+            } else {
+                comparison = valueA - valueB;
+            }
+
+            return sortConfig.direction === 'asc' ? comparison : -comparison;
+        });
+    };
+
+    const filteredSortedPlayers = sortPlayers(filteredPlayers, sortConfig);
     
     const indexOfLastPlayer = currentPage * playersPerPage;
     const indexOfFirstPlayer = indexOfLastPlayer - playersPerPage;
-    const currentPlayers = filteredPlayers.slice(indexOfFirstPlayer, indexOfLastPlayer);
+    const currentPlayers = filteredSortedPlayers.slice(indexOfFirstPlayer, indexOfLastPlayer);
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected + 1);
+    };
+
+    const handleSort = (sortKey) => {
+
+        setSortConfig(prev => ({
+            sortKey,
+            direction : prev.sortKey === sortKey && prev.direction === 'asc' ? 'desc' : 'asc'
+        }));
     };
 
     const resetFilters = () => {
@@ -57,7 +87,7 @@ const PlayerTable = () => {
 
     return (
         <div>
-            <h2>Player Info</h2>
+            <h2>Player Table</h2>
             <div>
                 <select 
                     onChange={e => setFilters(prev => ({ ...prev, position: e.target.value }))}
@@ -88,13 +118,25 @@ const PlayerTable = () => {
             <table>
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Team</th>
+                        <th onClick = {() => handleSort('name')}>
+                            Name 
+                            <span className = {sortConfig.sortKey === 'name' && sortConfig.direction === 'asc' ? 'active' : ''}>▲</span>
+                            <span className = {sortConfig.sortKey === 'name' && sortConfig.direction === 'desc' ? 'active' : ''}>▼</span>
+                        </th>
+                        <th onClick = {() => handleSort('position')}>
+                            Position
+                            <span className = {sortConfig.sortKey === 'position' && sortConfig.direction === 'asc' ? 'active' : ''}>▲</span>
+                            <span className = {sortConfig.sortKey === 'position' && sortConfig.direction === 'desc' ? 'active' : ''}>▼</span>
+                        </th>
+                        <th onClick = {() => handleSort('team_name')}>
+                            Team
+                            <span className = {sortConfig.sortKey === 'team_name' && sortConfig.direction === 'asc' ? 'active' : ''}>▲</span>
+                            <span className = {sortConfig.sortKey === 'team_name' && sortConfig.direction === 'desc' ? 'active' : ''}>▼</span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentPlayers.map(player => (
+                    {currentPlayers.map(player => ( 
                         <tr key={player.id}>
                             <td>{player.name}</td>
                             <td>{player.position}</td>
@@ -107,7 +149,7 @@ const PlayerTable = () => {
                 previousLabel={"Previous"}
                 nextLabel={"Next"}
                 breakLabel={"..."}
-                pageCount={Math.ceil(filteredPlayers.length / playersPerPage)}
+                pageCount={Math.ceil(filteredSortedPlayers.length / playersPerPage)}
                 marginPagesDisplayed={2}
                 pageRangeDisplayed={3}
                 onPageChange={handlePageClick}
