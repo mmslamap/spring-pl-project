@@ -21,19 +21,19 @@ public class PlayerService {
 
     }
 
-    public List<Player> getPlayer(){
+    public List<Player> getAllPlayers(){
 
         return playerRepository.findAll();
     }
 
-    public List<Player> getPlayerFromTeam(String teamName){
+    public List<Player> getPlayersFromTeam(String teamName){
 
         return playerRepository.findAll().stream()
                 .filter(player -> teamName.equals(player.getTeam_name()))
                 .collect(Collectors.toList());
     }
 
-    public List<Player> getPlayerByName(String playerName) {
+    public List<Player> getPlayersByName(String playerName) {
 
         List<Player> playerList = playerRepository.findByNameContainsIgnoreCase(playerName);
 
@@ -41,14 +41,14 @@ public class PlayerService {
 
     }
 
-    public List<Player> getPlayerByPosition(String playerPosition) {
+    public List<Player> getPlayersByPosition(String playerPosition) {
 
         return playerRepository.findAll().stream()
                 .filter(player -> playerPosition.equals(player.getPosition()))
                 .collect(Collectors.toList());
     }
 
-    public List<Player> getPLayerByTeamAndPosition(String teamName, String position) {
+    public List<Player> getPLayersByTeamAndPosition(String teamName, String position) {
 
         return playerRepository.findAll().stream()
                 .filter(player -> teamName.equals(player.getTeam_name()) && position.equals(player.getPosition()))

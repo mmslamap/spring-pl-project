@@ -31,31 +31,31 @@ public class PlayerController {
 
         if (team != null && position != null) {
 
-            return playerService.getPLayerByTeamAndPosition(team, position);
+            return playerService.getPLayersByTeamAndPosition(team, position);
 
         }
 
         else if (team != null) {
 
-            return playerService.getPlayerFromTeam(team);
+            return playerService.getPlayersFromTeam(team);
 
         }
 
         else if (name != null) {
 
-            return playerService.getPlayerByName(name);
+            return playerService.getPlayersByName(name);
 
         }
 
         else if (position != null) {
 
-            return playerService.getPlayerByPosition(position);
+            return playerService.getPlayersByPosition(position);
 
         }
 
         else {
 
-            return playerService.getPlayer();
+            return playerService.getAllPlayers();
 
         }
 
@@ -64,7 +64,7 @@ public class PlayerController {
     @GetMapping("name/{name}")
     public List<Player> findByName(@PathVariable String name) {
 
-        return playerService.getPlayerByName(name);
+        return playerService.getPlayersByName(name);
 
     }
 
